@@ -307,6 +307,9 @@ int gu_falcon_loader(const struct gu_falcon_io *io, const struct gu_falcon_engin
 	ret = gu_falcon_reset(io, eng, evidence);
 	if (ret)
 		return ret;
+	/* TEST (#242): the intermittent TU10x -110 goes away with dyndbg, whose
+	 * dev_dbg() calls slow this path down. Give the GSP time after reset. */
+	msleep(10);
 	/* TU10x GSP reads back HALTED after reset, as the HS path tolerates.
 	 * The WPR2 check after FWSEC proves the launch, not this bit. */
 	if (falcon_read(io, eng->base + GU_FALCON_CPUCTL_OFFSET, &ctl) || inaccessible(ctl) ||
